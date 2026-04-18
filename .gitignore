@@ -1,26 +1,24 @@
-# 1. 모든 것을 무시 (현재 2번 줄)
+# 1. 모든 것을 무시
 /*
 
-# 2. 예외 규정 (이 순서가 중요합니다!)
-!/gray_gamer_ambience/          # 1단계: 일단 이 성문을 연다
-!/gray_gamer_ambience/** # 2단계: 그 안의 모든 자식들을 허용한다
-!/app_cli.py                    # 3단계: 혹시나 해서 이름으로 한 번 더 허용
+# 2. .gitignore 자기 자신은 예외 (이게 있어야 법전이 먹힙니다)
+!.gitignore
 
-# 3. 관제탑 개방: .github 계층별 허용 (중요!)
+# 3. [핵심] 성문을 열고, 그 안의 모든 사람을 허용한다
+!/gray_gamer_ambience/
+!/gray_gamer_ambience/**
+
+# 4. [핵심] 데이터 창고 개방
+!/gray_gamer_ambience/novel_memory/
+!/gray_gamer_ambience/novel_memory/**
+
+# 5. 관제탑 개방
 !/.github/
 !/.github/workflows/
 !/.github/workflows/*.yml
 
-# 4. 정밀 타격: 허용된 폴더 내부에서도 쓰레기는 차단
-# (하위 폴더 깊숙한 곳까지 DS_Store와 캐시를 잡습니다)
+# 6. 쓰레기들만 정밀 타격 (어디 있든 무조건 차단)
 **/.DS_Store
 **/__pycache__/
 **/*.pyc
-
-# 5. 보안 및 설정 파일 보호
-.env
-**/.env
-.vscode/
-.idea/
-# 레포 전체에서 config.json이라는 이름은 다 무시해!
 config.json
