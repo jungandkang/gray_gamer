@@ -6,12 +6,6 @@
 !/gray_gamer_ambience/** # 2단계: 그 안의 모든 자식들을 허용한다
 !/app_cli.py                    # 3단계: 혹시나 해서 이름으로 한 번 더 허용
 
-
-!/gray_gamer_ambience/
-!/gray_gamer_ambience/**
-!/novel_memory/
-!/novel_memory/**
-
 # 3. 관제탑 개방: .github 계층별 허용 (중요!)
 !/.github/
 !/.github/workflows/
