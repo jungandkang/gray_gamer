@@ -1,12 +1,16 @@
-# 1. 철저한 봉쇄: 모든 파일 및 폴더 무시
+# 1. 모든 것을 무시 (현재 2번 줄)
 /*
 
-# 2. 개항: 필수 파일 및 핵심 폴더만 허용
-!/.gitignore
-!/gray_gamer_ambience/  # 하위 엔진 폴더 허용
-!/gray_gamer_ambience/app_cli.py
-!/gray_gamer_ambience/data/
-!/gray_gamer_ambience/novel_memory/
+# 2. 예외 규정 (이 순서가 중요합니다!)
+!/gray_gamer_ambience/          # 1단계: 일단 이 성문을 연다
+!/gray_gamer_ambience/** # 2단계: 그 안의 모든 자식들을 허용한다
+!/app_cli.py                    # 3단계: 혹시나 해서 이름으로 한 번 더 허용
+
+
+!/gray_gamer_ambience/
+!/gray_gamer_ambience/**
+!/novel_memory/
+!/novel_memory/**
 
 # 3. 관제탑 개방: .github 계층별 허용 (중요!)
 !/.github/
