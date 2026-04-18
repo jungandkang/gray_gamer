@@ -1,0 +1,28 @@
+# 1. 철저한 봉쇄: 모든 파일 및 폴더 무시
+/*
+
+# 2. 개항: 필수 파일 및 핵심 폴더만 허용
+!/.gitignore
+!/gray_gamer_ambience/  # 하위 엔진 폴더 허용
+!/gray_gamer_ambience/app_cli.py
+!/gray_gamer_ambience/data/
+!/gray_gamer_ambience/novel_memory/
+
+# 3. 관제탑 개방: .github 계층별 허용 (중요!)
+!/.github/
+!/.github/workflows/
+!/.github/workflows/*.yml
+
+# 4. 정밀 타격: 허용된 폴더 내부에서도 쓰레기는 차단
+# (하위 폴더 깊숙한 곳까지 DS_Store와 캐시를 잡습니다)
+**/.DS_Store
+**/__pycache__/
+**/*.pyc
+
+# 5. 보안 및 설정 파일 보호
+.env
+**/.env
+.vscode/
+.idea/
+# 레포 전체에서 config.json이라는 이름은 다 무시해!
+config.json

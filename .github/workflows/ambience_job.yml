@@ -1,0 +1,69 @@
+name: Run ambience 점수 채점, 순차적 실행.
+
+on:
+  workflow_dispatch: {}  # 수동 실행 (원하면 schedule 추가 가능) 
+
+jobs:
+  run-batches:
+    runs-on: ubuntu-latest
+    env:
+      API_KEY: ${{ secrets.API_KEY }}
+      MODEL_NAME: ${{ secrets.MODEL_NAME }}
+      MAX_TOKENS: ${{ secrets.MAX_TOKENS }}
+      TIMEOUT: ${{ secrets.TIMEOUT }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: Prepare config.json from secrets
+        run: |
+          mkdir -p data
+          # MAX_TOKENS and TIMEOUT may be empty; provide defaults using parameter expansion
+          : "${MAX_TOKENS:=2048}"
+          : "${TIMEOUT:=30}"
+          cat > data/config.json <<EOF
+          {
+            "API_KEY": "${API_KEY}",
+            "MODEL_NAME": "${MODEL_NAME}",
+            "max_tokens": ${MAX_TOKENS},
+            "timeout": ${TIMEOUT}
+          }
+          EOF
+          echo "Wrote data/config.json (API_KEY hidden)."
+
+      - name: Ensure output dir
+        run: mkdir -p novel_memory
+
+      - name: Run sequential batches 0..95 step 5
+        run: |
+          set -euo pipefail
+          # 변경: 마지막 인덱스(95)까지 5 간격으로 실행 -> 0,5,...,95. 95..99가 마지막 배치.
+          for start in $(seq 0 5 95); do
+            out="novel_memory/ambience_scores_${start}.json"
+            echo "==== Running batch starting at ${start} -> output: ${out} ===="
+            python app_cli.py --ambience-file novel_memory/ambience.json --out-file "$out" --batch-size 5 --start "$start"
+            rc=$?
+            if [ $rc -ne 0 ]; then
+              echo "Batch start=${start} failed (exit ${rc}). Aborting workflow."
+              exit $rc
+            fi
+            # optional: short pause to be gentle on API / avoid rate-limit bursts
+            sleep 1
+          done
+
+      - name: Upload all batch results as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ambience-scores
+          path: novel_memory/ambience_scores_*.json
+        
